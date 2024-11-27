@@ -27,12 +27,13 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/debug', (req, res) => {
-  const { testParam } = req.body;
-  testParam = testParam | "Connect to Database";
-  logger.debug('Parâmetro recebido para depuração', { testParam });
+  let { testParam } = req.body;
 
-  if (!testParam) {
-    logger.warning('Parâmetro de depuração ausente', { motivo: 'testParam não foi fornecido' });
+  const text = testParam || "Connect to Database";
+  logger.debug('Parâmetro recebido para depuração', { text });
+
+  if (!text) {
+    logger.warning('Parâmetro de depuração ausente', { motivo: 'text não foi fornecido' });
     return res.status(400).send('Parâmetro ausente');
   }
 
@@ -57,9 +58,9 @@ app.post('/error', async (req, res) => {
 
 
 app.post('/critical', (req, res) => {
-  const { serviceName } = req.body;
+  let { serviceName } = req.body;
 
-  serviceName = serviceName | "Main Service";
+  serviceName = serviceName || "Main Service";
 
   const criticalError = `Serviço ${serviceName} indisponível`;
   logger.critical('Erro crítico detectado', { serviceName, error: criticalError });

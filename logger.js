@@ -25,7 +25,7 @@ function formatLog(level, message, meta) {
 }
 
 function log(level, message, meta = {}) {
-  if (!levels[level]) {
+  if (!(level in levels)) {
     throw new Error(`Nível de log inválido: ${level}`);
   }
 
