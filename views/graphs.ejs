@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Graphs</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-3xl font-bold">Log Graphs</h1>
+            <a href="/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Back to Dashboard
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Traffic Over Time</h2>
+                <div class="mb-4 flex flex-wrap gap-4">
+                    <select id="granularity" class="border rounded p-2">
+                        <option value="minute">Per Minute</option>
+                        <option value="hour">Per Hour</option>
+                        <option value="day" selected>Per Day</option>
+                    </select>
+                    <select id="logLevel" class="border rounded p-2">
+                        <option value="">All Levels</option>
+                        <option value="debug">Debug</option>
+                        <option value="info">Info</option>
+                        <option value="warning">Warning</option>
+                        <option value="error">Error</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <canvas id="trafficChart"></canvas>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4">Anomaly Counter</h2>
+                <div class="text-5xl font-bold text-center text-red-500" id="anomalyCount"></div>
+                <p class="text-center mt-2 text-gray-600">Total Anomalies Detected</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const trafficChart = new Chart(document.getElementById('trafficChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Number of Logs',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    
+        function updateChart(data) {
+            trafficChart.data.labels = data.map(d => d.date);
+            trafficChart.data.datasets[0].data = data.map(d => d.count);
+            trafficChart.update();
+        }
+    
+        function fetchTrafficData() {
+            const granularity = document.getElementById('granularity').value;
+            const logLevel = document.getElementById('logLevel').value;
+            fetch(`/api/traffic?granularity=${granularity}&level=${logLevel}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateChart(data);
+    
+                    // Atualizar contagem de anomalias
+                    document.getElementById('anomalyCount').textContent = data.anomalyCount || 0;
+                })
+                .catch(error => console.error('Error fetching traffic data:', error));
+        }
+    
+        // Adicionar eventos aos filtros
+        document.getElementById('granularity').addEventListener('change', fetchTrafficData);
+        document.getElementById('logLevel').addEventListener('change', fetchTrafficData);
+    
+        // Atualizar a página automaticamente a cada 5 segundos
+        setInterval(fetchTrafficData, 5000);
+    
+        // Carregar dados iniciais
+        fetchTrafficData();
+    </script>    
+</body>
+</html>
+

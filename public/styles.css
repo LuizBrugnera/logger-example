@@ -15,3 +15,12 @@ select, input[type="date"] {
     padding-right: 2.5rem;
 }
 
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+#granularity, #logLevel {
+    min-width: 120px;
+}
+

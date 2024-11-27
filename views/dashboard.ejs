@@ -8,16 +8,21 @@
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-4">Log Dashboard</h1>
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-3xl font-bold">Log Dashboard</h1>
+            <a href="/graphs" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                View Graphs
+            </a>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <input type="text" id="searchGeneral" placeholder="Search logs..." class="w-full p-2 border rounded">
             <select id="searchLevel" class="w-full p-2 border rounded">
                 <option value="">All Levels</option>
+                <option value="debug">Debug</option>
                 <option value="info">Info</option>
                 <option value="warning">Warning</option>
                 <option value="error">Error</option>
                 <option value="critical">Critical</option>
-                <option value="debug">Debug</option>
             </select>
             <input type="text" id="searchIP" placeholder="Search by IP..." class="w-full p-2 border rounded">
             <input type="date" id="searchDate" class="w-full p-2 border rounded">
